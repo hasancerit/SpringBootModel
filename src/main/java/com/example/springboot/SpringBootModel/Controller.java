@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.support.SessionStatus;
 
 @SessionAttributes("sessionuser")
 @org.springframework.stereotype.Controller
@@ -112,21 +113,26 @@ public class Controller {					/* Method modelattribute */
 												/*Session Attr*/
 	
 	/*İstek atıldığı zaman, Spring @SessionAttribute("sessionusre") annt'dan dolayi, session attr'de "sessionuser" var mı diye bakar.
-	  Varsa model'a o attr'u ekler.
-	  Yoksa,@ModelAttribute('sessionuser') ile işaretlenmiş metodu(return new User()) çalistirir.Session ve Model'a bu attr eklenir.*/
+	  Varsa, sessiondan model'a o attr'u ekler.
+	  Yoksa,@ModelAttribute('sessionuser') ile işaretlenmiş metodu(return new User()) çalistirir.Session ve Model'a bu attr eklenir.
+	  		Eklenen attr session sonuna kadar sessionda kalir.*/
 	
 	/*Bu önekte, önce bu sinifdaki testsession metoduna istek atiyorum. Spring session'da "sessionuser" attr'u var mı diye bakiyor.
-	 *Olmadığı için populate metodu çalisip, session ve model'a bu attr'u ekliyor.
+	 *Olmadığı için populate metodu çalisip, session ve model'a bu attr'u ekliyor.Eklenen attr session sonuna kadar orda kalir.
 	*/
 	
 	@GetMapping("/testsession")
 	public String testsession(Model model,HttpSession ses){
+		System.out.println("TEST SESSİON");
+		System.out.println("Model'dan SessionUser:"+ ((User) model.asMap().get("sessionuser")).getIsim() +" "+((User) model.asMap().get("sessionuser")).getSoyisim());
+		System.out.println("HTTP SESSİON ATTRİBUTE'den SessionUser:"+ses.getAttribute("sessionuser"));//İLK İSTEKTE NULL, DİGERLERİNDE USERI DÖNDÜRDÜ
+		System.out.println("****");
 		return "result";
 	}
 
 	@ModelAttribute("sessionuser")
 	public User populate() {
-		System.out.println("SESSİON ATTR DOLDUR");
+		System.out.println("SESSİON ATTR DOLDUR 1");
 		User user = new User();
 		user.setIsim("Hasan");
 		user.setSoyisim("Falan");
